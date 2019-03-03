@@ -8,4 +8,5 @@
 /db-backups/*
 /alermanager/config.yml
 /grafana/provisioning/datasources/datasource.yml
-/graphana/provisioning/*
+/grafana/provisioning/*
+
