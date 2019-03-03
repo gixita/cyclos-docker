@@ -2,7 +2,7 @@
 Deployment of Cyclos with proxy and monitoring using docker-compose.
 
 Déploiement d'un serveur Cyclos pour les payements électroniques des monnaies complémentaires.
-Toutes les ASBL n'ont pas en leur sein les compétences nécessaires pour déployer l'application Cyclos de manière professionnelle et sécurisée.
+Toutes les ASBL n'ont pas en leur sein les compétences nécessaires pour déployer l'application Cyclos de manière adéquate et sécurisée.
 Ce repository a pour but de fournir une solution de déployement la plus simple possible afin qu'elle soit accessible à toutes ASBL.
 
 Ces scripts de déployement ont été réalisés en s'inspirant majoritairement d'autres implémentations. Je remercie chaleureusement ces personnes du travail incroyable qu'ils ont accompli.
@@ -31,22 +31,29 @@ Etape 1 : Modifier le fichier /etc/hosts afin d'ajouter les différents chemins 
 En production, nous n'utiliserons que deux chemins (ebanking et monitoring).
 Vous pouvez remplacer "domain.com" par le domaine de votre ASBL (ex: mon-asbl.test) et ajouter ces valeurs au fichier /etc/hosts. 
 De préférence, ne pas utiliser le nom de domaine de votre ASBL, car sinon vous ne pourrez plus y avoir accès de votre PC.
+```bash
 127.0.0.1       ebanking.domain.com
 127.0.0.1       monitoring.domain.com
 127.0.0.1       prometheus.domain.com
 127.0.0.1       cadvisor.domain.com
 127.0.0.1       node-exporter.domain.com
 127.0.0.1       alertmanager.domain.com
+```
 
 Ensuite vider le cache du DNS local par la commande suivante :
+```bash
 dscacheutil -flushcache
+```
 
 Renommer le fichier .env.sample en .env
 Modifier ensuite ce fichier .env de variable d'environnement qui sera utilisé par Docker.
 La génération du mot de passe de la base de donnée devrait être fait avec la commande suivante :
+```bash
 openssl rand -base64 32
+```
 Les adresses en local doivent être les mêmes que celles utilisées dans le fichier /etc/hosts
 
+```bash
 # To be changed by each MLC
 CYCLOS_DB_USER=db-username
 CYCLOS_DB_PASSWORD=db-password
@@ -61,6 +68,7 @@ NODEEXPORTER_VIRTUAL_HOST=node-exporter.domain.com
 ALERTMANAGER_VIRTUAL_HOST=alertmanager.domain.com
 CADVISOR_VIRTUAL_HOST=cadvisor.domain.com
 ## End of only for localhost ##
+```
 
 Afin d'être alerté d'un problème avec le site web, il faut modifier le fichier de configuration de alertmanager.
 Dans le cas présent, les alertes sont envoyées sur un channel Slack mais peuvent également être envoyées par mail. Voir le lien suivant pour faire cette modification (digital ocean).
@@ -72,12 +80,15 @@ Il faut maintenant modifier le fichier de configuration de grafana pour afficher
 Il faut renommer le fichier ./grafana/config.monitoring.sample en config.monitoring et modifier le fichier.
 Utiliser un mot passe difficle, comme précédement en le générant à l'aide la commande openssl.
 
+```bash
 GF_SECURITY_ADMIN_PASSWORD=foobar
 GF_USERS_ALLOW_SIGN_UP=false
 GF_SERVER_ROOT_URL=http://monitoring.domain.com
+```
 
 Renommer le fichier prometheus.yml.sample en prometheus.yml se trouvant dans le répertoire prometheus.
 Mettre l'url de votre site web qui sera en production dans le jobname "nginx".
+```bash
 - job_name: 'nginx'
     metrics_path: /probe
     scrape_interval: 300s
@@ -93,9 +104,11 @@ Mettre l'url de votre site web qui sera en production dans le jobname "nginx".
         target_label: instance
       - target_label: __address__
         replacement: blackbox:9115
+```
 
 Renommer alert.rules.sample en alert.rules dans le répertoire prometheus.
 Indiquer l'URL de votre site web en production.
+```bash
 - name: cyclos
   rules:
   - alert: cyclos_down
@@ -105,6 +118,7 @@ Indiquer l'URL de votre site web en production.
       severity: critical
     annotations:
       summary: "cyclos is down - intervention required"
+```
 
 
 Il est temps maintenant d'installer Cyclos et les différents composants mentionnés ci-dessus.
@@ -114,9 +128,12 @@ L'installation prendra un peu moins de 10 min, le temps d'un petit café.
 
 Lorsque l'installation est terminée, vous pouvez utiliser la commande suivante pour voir si tous les containers sont actifs.
 
+```bash
 Docker ps 
+```
 
 Vous devriez avoir les containers suivants. Si certains sont manquants, il faudra vérifier que vous n'avez pas fait une faute de frappe en écrivant les variables d'environnement.
+```bash
 nginx-letsencrypt
 nginx-gen
 nginx-web
@@ -129,9 +146,12 @@ node-exporter
 cadvisor
 prometheus
 grafana
+```
 
 Les logs d'un container sont accessible via la commande 
+```bash
 docker logs <nom-du-container>
+```
 
 Se connecter à Grafana avec le login "admin" et mot de passe choisi.
 Ajouter dans les datasources, la source prometheus.
@@ -139,18 +159,28 @@ Dans les dashboard, importer l'id #179.
 
 
 Pour éteindre l'application, il suffit de faire 
+```bash
 sh stop-all.sh
+```
 Et si quelque chose c'est mal passé durant une extinction, vous pouvez fermer tous les containers actifs en ajoutant l'argument "force"
+```bash
 sh stop-all.sh
+```
 
 Pour redémarrer l'application Cyclos et tous les composant, utiliser la commande:
+```bash
 sh start-all.sh
+```
 
 Si après avoir détecter que dans les logs de Cyclos une erreur critique est apparue, vous pouvez redémarrer Cyclos uniquement par la commande
+```bash
 sh restart-cyclos.sh
+```
 
 Faire un backup manuel de la base de données de l'application Cyclos. La base de donnée doit être au moins active.
+```bash
 sh manual-backup-cyclos.sh
+```
 
 Par défaut les containers sont stateless, donc après le redémarrage d'un container, les données ont disparu, ce qui n'est pas pratique dans notre cas.
 Différents dossiers sont montés dans la racine de ce projet dont par exemple db-data qui contient la base de données de Cyclos.
@@ -174,8 +204,10 @@ cyclos.yml
 monitoring.yml
 
 Il faut décommenter les lignes suivantes partout pour activer Let's Encrypt et sécuriser le site.
+```bash
 - LETSENCRYPT_HOST=${CYCLOS_VIRTUAL_HOST:-ebanking.domain.com}
 - LETSENCRYPT_EMAIL=${HTTPS_MAIL:-me@example.com}
+```
 
 Mettre la base donnée paramétrée en local sur le serveur de production.
 Faire un backup de la base de donnée locale avec la commande à lancer en local.
@@ -187,9 +219,13 @@ Sur le serveur de production dans le dossier de l'application, lancer
 sh restoredb-cyclos.sh database-filename.sql
 
 Vérifier que le container s'est bien éteind par la commande 
+```bash
 docker ps
+```
 Vous ne devriez pas voir apparaître de container cyclos-restore-db ni aucun autre container correspondant à l'application.
 Relancer l'application Cyclos
+```bash
 sh start-all.sh
+```
 
 Tester intensivement votre plateforme Cyclos
