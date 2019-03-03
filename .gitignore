@@ -1,0 +1,11 @@
+.env
+/prometheus/alert.rules
+/prometheus/prometheus.yml
+/grafana/config.monitoring
+/nginx-data/*
+/db-data/*
+/restoredb/*
+/db-backups/*
+/alermanager/config.yml
+/grafana/provisioning/datasources/datasource.yml
+/graphana/provisioning/*

@@ -1,0 +1,114 @@
+version: '3.1'
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+networks:
+  back-tier:
+  webproxy:
+    external:
+      name: ${NETWORK:-webproxy}
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.1.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    links:
+      - cadvisor:cadvisor
+      - alertmanager:alertmanager
+    depends_on:
+      - cadvisor
+    networks:
+      - back-tier
+    restart: always
+    # environment:
+    #   - VIRTUAL_HOST=${PROMETHEUS_VIRTUAL_HOST:-prometheus.mlc.test}
+    #   - VIRTUAL_PORT=9090
+      
+  node-exporter:
+    image: prom/node-exporter:v0.17.0
+    container_name: node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    networks:
+      - back-tier
+    restart: always
+    # environment:
+    #   - VIRTUAL_HOST=${NODEEXPORTER_VIRTUAL_HOST:-node-exporter.mlc.test}
+    #   - VIRTUAL_PORT=9100
+    deploy:
+      mode: global
+
+  alertmanager:
+    image: prom/alertmanager:v0.16.1
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    networks:
+      - back-tier
+    restart: always
+    # environment:
+    #   - VIRTUAL_HOST=${ALERTMANAGER_VIRTUAL_HOST:-alertmanager.mlc.test}
+    #   - VIRTUAL_PORT=9093
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+  cadvisor:
+    image: google/cadvisor:v0.33.0
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - back-tier
+    restart: always
+    deploy:
+      mode: global
+    # environment:
+    #   - VIRTUAL_HOST=${CADVISOR_VIRTUAL_HOST:-cadvisor.mlc.test}
+    #   - VIRTUAL_PORT=8080
+
+  grafana:
+    image: grafana/grafana:6.0.0
+    container_name: grafana
+    user: "104"
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./grafana/config.monitoring
+    networks:
+      - back-tier
+      - webproxy
+    restart: always
+    environment:
+      - VIRTUAL_HOST=${GRAFANA_VIRTUAL_HOST:-monitoring.mlc.test}
+      - VIRTUAL_PORT=3000
+      # - LETSENCRYPT_HOST=${GRAFANA_VIRTUAL_HOST:-monitoring.domain.com}
+      # - LETSENCRYPT_EMAIL=${HTTPS_MAIL:-me@example.com}
+  blackbox:
+    image: prom/blackbox-exporter:v0.14.0
+    container_name: blackbox
+    networks:
+      - back-tier
+    

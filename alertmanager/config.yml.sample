@@ -1,0 +1,10 @@
+route:
+    receiver: 'slack'
+
+receivers:
+    - name: 'slack'
+      slack_configs:
+          - send_resolved: true
+            username: 'username-alert'
+            channel: '#it-alerts-channel'
+            api_url: '<SLACK_API_URL>'

@@ -1,0 +1,64 @@
+version: '3'
+services:
+    cyclos-db:
+        image: cyclos/db
+        container_name: cyclos-db
+        restart: always
+        hostname: cyclos-db
+        networks:
+          - cyclos-net
+        volumes:
+          - ./db-data:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_DB=${CYCLOS_DB_NAME:-cyclosdb}
+            - POSTGRES_USER=${CYCLOS_DB_USER:-admin}
+            - POSTGRES_PASSWORD=${CYCLOS_DB_PASSWORD:-foobar}
+        
+    cyclos-app:
+        image: cyclos/cyclos:4.11.4
+        restart: always
+        container_name: cyclos-app
+        networks:
+          - cyclos-net
+          - webproxy
+        links:
+            - cyclos-db:cyclos-db
+        depends_on:
+            - cyclos-db
+        environment:
+            - DB_HOST=cyclos-db
+            - DB_NAME=${CYCLOS_DB_NAME:-cyclosdb}
+            - DB_USER=${CYCLOS_DB_USER:-admin}
+            - DB_PASSWORD=${CYCLOS_DB_PASSWORD:-foobar}
+            - VIRTUAL_HOST=${CYCLOS_VIRTUAL_HOST:-ebanking.mlc.test}
+            - VIRTUAL_PORT=80
+            # - LETSENCRYPT_HOST=${CYCLOS_VIRTUAL_HOST:-ebanking.mlc.test}
+            # - LETSENCRYPT_EMAIL=${HTTPS_MAIL:-me@example.com}
+    pgbackups:
+        image: prodrigestivill/postgres-backup-local:10
+        restart: always
+        container_name: pgbackups
+        volumes:
+            - ./db-backups:/backups
+        networks:
+          - cyclos-net
+        links:
+            - cyclos-db
+        depends_on:
+            - cyclos-db
+        environment:
+            - POSTGRES_HOST=cyclos-db
+            - POSTGRES_DB=${CYCLOS_DB_NAME:-cyclosdb}
+            - POSTGRES_USER=${CYCLOS_DB_USER:-admin}
+            - POSTGRES_PASSWORD=${CYCLOS_DB_PASSWORD:-foobar}
+            - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+            - SCHEDULE=@hourly
+            - BACKUP_KEEP_DAYS=7
+            - BACKUP_KEEP_WEEKS=4
+            - BACKUP_KEEP_MONTHS=6
+            - HEALTHCHECK_PORT=80
+networks:
+    webproxy:
+       external:
+         name: ${NETWORK:-webproxy}
+    cyclos-net:
