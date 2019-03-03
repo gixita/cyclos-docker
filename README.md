@@ -76,7 +76,13 @@ Afin d'être alerté d'un problème avec le site web, il faut modifier le fichie
 Dans le cas présent, les alertes sont envoyées sur un channel Slack mais peuvent également être envoyées par mail. Voir le lien suivant pour faire cette modification ([digital ocean](https://www.digitalocean.com/community/tutorials/how-to-use-alertmanager-and-blackbox-exporter-to-monitor-your-web-server-on-ubuntu-16-04)).
 
 Renommer le fichier `./alertmanager/config.yml.sample` en `./alertmanager/config.yml` et modifier le fichier `./alertmanager/config.yml` avec vos paramètres Slack.
-Un tutoriel explicant comment gérérer l'url d'api pour Slack peut être trouvé ici.
+Création d'un incoming webhook sur Slack : 
+- Open your slack team in your browser `https://<your-slack-team>.slack.com/apps`
+- Click build in the upper right corner
+- Choose Incoming Web Hooks link under Send Messages
+- Click on the "incoming webhook integration" link
+- Select which channel
+- Click on Add Incoming WebHooks integration
 
 Il faut maintenant modifier le fichier de configuration de grafana pour afficher les résultats du monitoring.
 Il faut renommer le fichier `./grafana/config.monitoring.sample` en `config.monitoring` et modifier le fichier.
