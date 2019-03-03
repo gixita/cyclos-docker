@@ -26,7 +26,7 @@ La solution est composée de :
     - alertmanager
 - l'outil de dashboarding grafana pour visualiser les données du monitoring.
 
-##Déploiement en local
+## Déploiement en local
 La solution peut être déployée localement afin de paramétriser l'outil qui sera ensuite migré (facilement) sur le serveur de production de l'ASBL.
 
 Modifier le fichier `/etc/hosts` afin d'ajouter les différents chemins qui seront utilisés par l'application en local.
@@ -191,7 +191,7 @@ Les backups plannifiés sont stockés dans le répertoire `db-backups`.
 
 Voilà, il est maintenant temps de commencer à paramètrer la solution Cyclos pour votre ASBL. Bon amusement.
 
-##Déploiement sur le serveur
+## Déploiement sur le serveur
 Maintenant que votre solution est paramétrée et correspond exactement à vos besoins, nous allons migrer la solution Cyclos vers le serveur.
 Pour vous connecter en SSH sur le serveur, il est nécessaire de vous connecter avec un certificat de sécurité.
 La première étape est d'ajouter dans les DNS de votre hébergeur les deux sous-domaines suivants :
