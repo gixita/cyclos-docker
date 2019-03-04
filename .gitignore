@@ -9,4 +9,5 @@
 /alermanager/config.yml
 /grafana/provisioning/datasources/datasource.yml
 /grafana/provisioning/*
+/cyclos/*
 
