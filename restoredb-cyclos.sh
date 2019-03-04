@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "############################"
-echo "# ATTENTION, be careful    #"
+echo "#       ATTENTION          #"
 echo "############################"
 echo ""
 echo "This procedure is irreversible."

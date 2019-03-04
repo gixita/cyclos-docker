@@ -8,3 +8,7 @@ receivers:
             username: 'username-alert'
             channel: '#it-alerts-channel'
             api_url: '<SLACK_API_URL>'
+            title: '{{ template "custom_title" . }}'
+            text: '{{ template "custom_slack_message" . }}'
+templates:
+    - /etc/alertmanager/notifications.tmpl

@@ -1,11 +1,10 @@
 # cyclos-docker
-Deployment of Cyclos with proxy and monitoring using docker-compose.
+Deployment of [Cyclos](https://www.cyclos.org/) with proxy, automatic backups and monitoring using docker-compose.
 
-Déploiement d'un serveur Cyclos pour les payements électroniques des monnaies complémentaires.
-Toutes les ASBL n'ont pas en leur sein les compétences nécessaires pour déployer l'application Cyclos de manière adéquate et sécurisée.
-Ce repository a pour but de fournir une solution de déployement la plus simple possible afin qu'elle soit accessible à toutes ASBL.
+Déploiement d'un serveur Cyclos pour les payements électroniques des monnaies locales complémentaires.
+Ce repository a pour but de fournir une solution de déployement la plus simple possible afin qu'elle soit accessible à toutes ASBL de gestion de MLC.
 
-Ces scripts de déployement ont été réalisés en s'inspirant majoritairement d'autres implémentations. Je remercie ces personnes du travail qu'ils ont accompli. Vous pouvez trouver ci-dessous les codes liens vers les repository GitHub.
+Ces scripts de déployements ont été réalisés en s'inspirant majoritairement d'autres implémentations. Je remercie ces personnes du travail qu'ils ont accompli. Vous pouvez trouver ci-dessous les liens vers leurs repository GitHub.
 - https://github.com/evertramos/docker-compose-letsencrypt-nginx-proxy-companion
 - https://github.com/prodrigestivill/docker-postgres-backup-local
 - https://github.com/vegasbrianc/prometheus
@@ -138,7 +137,7 @@ L'installation prendra un peu moins de 10 min, le temps d'un petit café.
 Lorsque l'installation est terminée, vous pouvez utiliser la commande suivante pour voir si tous les containers sont actifs.
 
 ```bash
-Docker ps 
+docker ps 
 ```
 
 Vous devriez voir les containers suivants. Si certains sont manquants, il faudra vérifier que vous n'avez pas fait une faute de frappe en écrivant les variables d'environnement.
@@ -176,7 +175,7 @@ Et si quelque chose c'est mal passé durant une extinction, vous pouvez fermer t
 sh stop-all.sh force
 ```
 
-Pour redémarrer l'application Cyclos et tous les composant, utiliser la commande:
+Pour redémarrer l'application Cyclos et tous les composants, utiliser la commande:
 ```bash
 sh start-all.sh
 ```
@@ -186,13 +185,13 @@ Si après avoir détecter que dans les logs de Cyclos une erreur critique est ap
 sh restart-cyclos.sh
 ```
 
-Faire un backup manuel de la base de données de l'application Cyclos. La base de donnée doit être au moins active.
+Faire un backup manuel de la base de données de l'application Cyclos. La base de donnée (container cyclos-db) doit être active.
 ```bash
 sh manual-backup-cyclos.sh
 ```
 
 Par défaut les containers sont stateless, donc après le redémarrage d'un container, les données ont disparu, ce qui n'est pas pratique dans notre cas.
-Différents dossiers sont montés dans la racine de ce projet dont par exemple db-data qui contient la base de données de Cyclos.
+Différents dossiers sont montés dans la racine de ce projet dont par exemple `db-data` qui contient la base de données de Cyclos.
 Les backups plannifiés sont stockés dans le répertoire `db-backups`.
 
 Voilà, il est maintenant temps de commencer à paramètrer la solution Cyclos pour votre ASBL. Bon amusement.
@@ -227,7 +226,7 @@ Veillez à ce que ce soit le seul fichier du répertoire. Sinon un message d'err
 
 Sur le serveur de production dans le dossier de l'application, lancer
 ```bash
-sh restoredb-cyclos.sh database-filename.sql
+sh restoredb-cyclos.sh database-backup-filename.sql
 ```
 
 Vérifier que le container s'est bien éteint par la commande 

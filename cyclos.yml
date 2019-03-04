@@ -25,6 +25,9 @@ services:
             - cyclos-db:cyclos-db
         depends_on:
             - cyclos-db
+        volumes:
+            - ./cyclos/logs:/usr/local/tomcat/logs
+            # - ./cyclos/data:/usr/local/cyclos
         environment:
             - DB_HOST=cyclos-db
             - DB_NAME=${CYCLOS_DB_NAME:-cyclosdb}

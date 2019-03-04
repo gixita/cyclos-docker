@@ -1,0 +1,55 @@
+04-Mar-2019 10:48:13.268 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log No Spring WebApplicationInitializer types detected on classpath
+04-Mar-2019 10:48:14.312 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring root WebApplicationContext
+04-Mar-2019 10:49:46.782 INFO [http-nio-8080-exec-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring FrameworkServlet 'content'
+04-Mar-2019 10:50:10.418 INFO [http-nio-8080-exec-4] org.apache.catalina.core.ApplicationContext.log Initializing Spring FrameworkServlet 'web-rpc'
+04-Mar-2019 10:50:22.216 INFO [http-nio-8080-exec-5] org.apache.catalina.core.ApplicationContext.log Initializing Spring FrameworkServlet 'push-notifications'
+04-Mar-2019 10:57:19.611 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Destroying Spring FrameworkServlet 'push-notifications'
+04-Mar-2019 10:57:19.679 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Destroying Spring FrameworkServlet 'content'
+04-Mar-2019 10:57:19.681 SEVERE [http-nio-8080-exec-5] org.apache.catalina.core.ApplicationContext.log Error during mapping
+ java.lang.NullPointerException
+	at org.apache.catalina.mapper.Mapper.internalMapWrapper(Mapper.java:861)
+	at org.apache.catalina.mapper.Mapper.map(Mapper.java:722)
+	at org.apache.catalina.core.ApplicationContext.getRequestDispatcher(ApplicationContext.java:474)
+	at org.apache.catalina.core.ApplicationContextFacade.getRequestDispatcher(ApplicationContextFacade.java:223)
+	at org.apache.catalina.core.AsyncContextImpl.dispatch(AsyncContextImpl.java:200)
+	at org.apache.catalina.core.AsyncContextImpl.dispatch(AsyncContextImpl.java:179)
+	at org.apache.catalina.core.AsyncContextImpl.dispatch(AsyncContextImpl.java:173)
+	at org.springframework.web.context.request.async.StandardServletAsyncWebRequest.dispatch(StandardServletAsyncWebRequest.java:132)
+	at org.springframework.web.context.request.async.WebAsyncManager.setConcurrentResultAndDispatch(WebAsyncManager.java:353)
+	at org.springframework.web.context.request.async.WebAsyncManager.lambda$startDeferredResultProcessing$8(WebAsyncManager.java:419)
+	at org.springframework.web.context.request.async.DeferredResult.setResultInternal(DeferredResult.java:253)
+	at org.springframework.web.context.request.async.DeferredResult.setErrorResult(DeferredResult.java:268)
+	at org.springframework.web.context.request.async.TimeoutDeferredResultProcessingInterceptor.handleTimeout(TimeoutDeferredResultProcessingInterceptor.java:42)
+	at org.springframework.web.context.request.async.DeferredResultInterceptorChain.triggerAfterTimeout(DeferredResultInterceptorChain.java:79)
+	at org.springframework.web.context.request.async.WebAsyncManager.lambda$startDeferredResultProcessing$5(WebAsyncManager.java:390)
+	at java.util.ArrayList.forEach(ArrayList.java:1257)
+	at org.springframework.web.context.request.async.StandardServletAsyncWebRequest.onTimeout(StandardServletAsyncWebRequest.java:151)
+	at org.apache.catalina.core.AsyncListenerWrapper.fireOnTimeout(AsyncListenerWrapper.java:44)
+	at org.apache.catalina.core.AsyncContextImpl.timeout(AsyncContextImpl.java:137)
+	at org.apache.catalina.connector.CoyoteAdapter.asyncDispatch(CoyoteAdapter.java:153)
+	at org.apache.coyote.AbstractProcessor.dispatch(AbstractProcessor.java:245)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:53)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:806)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1498)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+
+04-Mar-2019 10:57:19.807 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Destroying Spring FrameworkServlet 'web-rpc'
+04-Mar-2019 10:57:19.853 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Closing Spring root WebApplicationContext
+04-Mar-2019 10:58:58.745 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log No Spring WebApplicationInitializer types detected on classpath
+04-Mar-2019 10:59:00.681 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring root WebApplicationContext
+04-Mar-2019 11:00:30.241 INFO [http-nio-8080-exec-2] org.apache.catalina.core.ApplicationContext.log Initializing Spring FrameworkServlet 'content'
+04-Mar-2019 11:01:02.255 INFO [http-nio-8080-exec-3] org.apache.catalina.core.ApplicationContext.log Initializing Spring FrameworkServlet 'web-rpc'
+04-Mar-2019 11:01:14.288 INFO [http-nio-8080-exec-4] org.apache.catalina.core.ApplicationContext.log Initializing Spring FrameworkServlet 'push-notifications'
+04-Mar-2019 11:18:37.684 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Destroying Spring FrameworkServlet 'push-notifications'
+04-Mar-2019 11:18:37.835 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Destroying Spring FrameworkServlet 'content'
+04-Mar-2019 11:18:37.913 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Destroying Spring FrameworkServlet 'web-rpc'
+04-Mar-2019 11:18:37.997 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Closing Spring root WebApplicationContext
+04-Mar-2019 11:20:45.627 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log No Spring WebApplicationInitializer types detected on classpath
+04-Mar-2019 11:20:46.968 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring root WebApplicationContext
+04-Mar-2019 11:36:33.550 INFO [localhost-startStop-2] org.apache.catalina.core.ApplicationContext.log Closing Spring root WebApplicationContext
+04-Mar-2019 11:40:02.232 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log No Spring WebApplicationInitializer types detected on classpath
+04-Mar-2019 11:40:03.176 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring root WebApplicationContext

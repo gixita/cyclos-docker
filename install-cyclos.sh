@@ -46,26 +46,26 @@ if [ ! -z ${USE_NGINX_CONF_FILES+X} ] && [ "$USE_NGINX_CONF_FILES" = true ]; the
     fi
 fi 
 
-# 7. Start application
-echo "Initialize reverse proxy"
-docker-compose -f proxy.yml up -d
-echo "Initialize cyclos database"
-docker-compose -f cyclos.yml up -d cyclos-db
-echo "Waiting 2 min for db creation."
-sleep 120
-echo "Initialize cyclos application"
-docker-compose -f cyclos.yml up -d cyclos-app
-echo "Waiting 4 min for cyclos db tables creation."
-sleep 240
-echo "Initialize cyclos database automatic updates"
-docker-compose -f cyclos.yml up -d pgbackups
-sleep 10
-echo "Initialize cyclos monitoring"
-docker-compose -f monitoring.yml up -d
-echo "Stopping Cyclos only"
-docker-compose -f cyclos.yml down
-echo "Final Cyclos start only"
-docker-compose -f cyclos.yml up -d
-echo "Cyclos will take up to 3 minutes to launch."
+# # 7. Start application
+# echo "Initialize reverse proxy"
+# docker-compose -f proxy.yml up -d
+# echo "Initialize cyclos database"
+# docker-compose -f cyclos.yml up -d cyclos-db
+# echo "Waiting 2 min for db creation."
+# sleep 120
+# echo "Initialize cyclos application"
+# docker-compose -f cyclos.yml up -d cyclos-app
+# echo "Waiting 4 min for cyclos db tables creation."
+# sleep 240
+# echo "Initialize cyclos database automatic updates"
+# docker-compose -f cyclos.yml up -d pgbackups
+# sleep 10
+# echo "Initialize cyclos monitoring"
+# docker-compose -f monitoring.yml up -d
+# echo "Stopping Cyclos only"
+# docker-compose -f cyclos.yml down
+# echo "Final Cyclos start only"
+# docker-compose -f cyclos.yml up -d
+# echo "Cyclos will take up to 3 minutes to launch."
 
 exit 0

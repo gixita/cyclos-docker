@@ -28,7 +28,6 @@ Etape 1 : Modifier le fichier /etc/hosts afin d'ajouter les différents chemins 
 En production, nous n'utiliserons que deux chemins (ebanking et monitoring).
 Vous pouvez remplacer "domain.com" par le domaine de votre ASBL (ex: mon-asbl.test) et ajouter ces valeurs au fichier /etc/hosts. 
 De préférence, ne pas utiliser le nom de domaine de votre ASBL, car sinon vous ne pourrez plus y avoir accès de votre PC.
-127.0.0.1       ebanking.domain.com
 127.0.0.1       monitoring.domain.com
 127.0.0.1       prometheus.domain.com
 127.0.0.1       cadvisor.domain.com
