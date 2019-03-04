@@ -6,7 +6,7 @@
 /db-data/*
 /restoredb/*
 /db-backups/*
-/alermanager/config.yml
+/alertmanager/config.yml
 /grafana/provisioning/datasources/datasource.yml
 /grafana/provisioning/*
 /cyclos
