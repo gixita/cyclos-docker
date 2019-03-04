@@ -71,6 +71,11 @@ CADVISOR_VIRTUAL_HOST=cadvisor.domain.com
 ## End of only for localhost ##
 ```
 
+Appliquer les valeurs d'environnement par la fonction suivante: 
+```bash
+source .env
+```
+
 Afin d'être alerté d'un problème avec le site web, il faut modifier le fichier de configuration de alertmanager.
 Dans le cas présent, les alertes sont envoyées sur un channel Slack mais peuvent également être envoyées par mail. Voir le lien suivant pour faire cette modification ([digital ocean](https://www.digitalocean.com/community/tutorials/how-to-use-alertmanager-and-blackbox-exporter-to-monitor-your-web-server-on-ubuntu-16-04)).
 

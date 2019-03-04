@@ -27,7 +27,8 @@ services:
             - cyclos-db
         volumes:
             - ./cyclos/logs:/usr/local/tomcat/logs
-            # - ./cyclos/data:/usr/local/cyclos
+            # Not working server.xml why is the file not mounted on the server (check for auto rewrite)
+            - ./cyclos/tomcat/server.xml:/usr/local/tomcat/conf/server.xml
         environment:
             - DB_HOST=cyclos-db
             - DB_NAME=${CYCLOS_DB_NAME:-cyclosdb}
