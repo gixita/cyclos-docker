@@ -33,12 +33,11 @@ En production, nous n'utiliserons que deux chemins (`ebanking` et `monitoring`).
 Vous pouvez remplacer "domain.com" par le domaine de votre ASBL (ex: mon-asbl.test) et ajouter ces valeurs au fichier `/etc/hosts`. 
 De préférence, ne pas utiliser le nom de domaine de votre ASBL, car sinon vous ne pourrez plus y avoir accès de votre PC.
 ```bash
-127.0.0.1       ebanking.domain.com
-127.0.0.1       monitoring.domain.com
-127.0.0.1       prometheus.domain.com
-127.0.0.1       cadvisor.domain.com
-127.0.0.1       node-exporter.domain.com
-127.0.0.1       alertmanager.domain.com
+127.0.0.1       monitoring.localhost
+127.0.0.1       prometheus.localhost
+127.0.0.1       cadvisor.localhost
+127.0.0.1       node-exporter.localhost
+127.0.0.1       alertmanager.localhost
 ```
 
 Ensuite vider le cache du DNS local par la commande suivante :
@@ -132,7 +131,7 @@ Appliquer les paramètres avec la commande suivante.
 ```bash
 sh apply-params.sh
 ```
-A chaque fois que vous modifier des paramètres se trouvant dans le dossier `./params`, il est nécessaire de répèter la commande d'application des paramètres.
+A chaque fois que vous modifiez des paramètres se trouvant dans le dossier `./params`, il est nécessaire de répèter la commande d'application des paramètres.
 
 Il est temps maintenant d'installer Cyclos et les différents composants mentionnés ci-dessus.
 Vous pouvez dans la racine du folder, utiliser la commande :
