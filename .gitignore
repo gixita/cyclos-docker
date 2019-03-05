@@ -10,5 +10,9 @@
 /grafana/provisioning/datasources/datasource.yml
 /grafana/provisioning/*
 /cyclos
-
+/params/alert.rules
+/params/prometheus.yml
+/params/config.monitoring
+/params/config.yml
+/params/.env
 
