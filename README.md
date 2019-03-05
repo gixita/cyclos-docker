@@ -46,7 +46,7 @@ Ensuite vider le cache du DNS local par la commande suivante :
 dscacheutil -flushcache
 ```
 
-Renommer le fichier `.env.sample` en `.env`
+Renommer le fichier `/params/.env.sample` en `/params/.env`
 Modifier ensuite ce fichier .env de variable d'environnement qui sera utilisé par Docker.
 La génération du mot de passe de la base de donnée devrait être fait avec la commande suivante :
 ```bash
@@ -71,15 +71,11 @@ CADVISOR_VIRTUAL_HOST=cadvisor.domain.com
 ## End of only for localhost ##
 ```
 
-Appliquer les valeurs d'environnement par la fonction suivante: 
-```bash
-source .env
-```
 
 Afin d'être alerté d'un problème avec le site web, il faut modifier le fichier de configuration de alertmanager.
 Dans le cas présent, les alertes sont envoyées sur un channel Slack mais peuvent également être envoyées par mail. Voir le lien suivant pour faire cette modification ([digital ocean](https://www.digitalocean.com/community/tutorials/how-to-use-alertmanager-and-blackbox-exporter-to-monitor-your-web-server-on-ubuntu-16-04)).
 
-Renommer le fichier `./alertmanager/config.yml.sample` en `./alertmanager/config.yml` et modifier le fichier `./alertmanager/config.yml` avec vos paramètres Slack.
+Renommer le fichier `./params/config.yml.sample` en `./params/config.yml` et modifier le fichier `./params/config.yml` avec vos paramètres Slack.
 Création d'un incoming webhook sur Slack : 
 - Open your slack team in your browser `https://<your-slack-team>.slack.com/apps`
 - Click build in the upper right corner
@@ -89,7 +85,7 @@ Création d'un incoming webhook sur Slack :
 - Click on Add Incoming WebHooks integration
 
 Il faut maintenant modifier le fichier de configuration de grafana pour afficher les résultats du monitoring.
-Il faut renommer le fichier `./grafana/config.monitoring.sample` en `config.monitoring` et modifier le fichier.
+Il faut renommer le fichier `./params/config.monitoring.sample` en `./params/config.monitoring` et modifier le fichier.
 Utiliser un mot passe difficle, comme précédement en le générant à l'aide la commande openssl.
 
 ```bash
@@ -98,7 +94,7 @@ GF_USERS_ALLOW_SIGN_UP=false
 GF_SERVER_ROOT_URL=http://monitoring.domain.com
 ```
 
-Renommer le fichier `prometheus.yml.sample` en `prometheus.yml` se trouvant dans le répertoire prometheus.
+Renommer le fichier `./params/prometheus.yml.sample` en `./params/prometheus.yml`.
 Mettre l'url de votre site web qui sera en production dans le jobname `nginx`.
 ```bash
 - job_name: 'nginx'
@@ -118,7 +114,7 @@ Mettre l'url de votre site web qui sera en production dans le jobname `nginx`.
         replacement: blackbox:9115
 ```
 
-Renommer `alert.rules.sample` en `alert.rules` dans le répertoire prometheus.
+Renommer `./params/alert.rules.sample` en `./params/alert.rules`.
 Indiquer l'URL de votre site web en production.
 ```bash
 - name: cyclos
@@ -131,6 +127,12 @@ Indiquer l'URL de votre site web en production.
     annotations:
       summary: "cyclos is down - intervention required"
 ```
+
+Appliquer les paramètres avec la commande suivante.
+```bash
+sh apply-params.sh
+```
+A chaque fois que vous modifier des paramètres se trouvant dans le dossier `./params`, il est nécessaire de répèter la commande d'application des paramètres.
 
 Il est temps maintenant d'installer Cyclos et les différents composants mentionnés ci-dessus.
 Vous pouvez dans la racine du folder, utiliser la commande :
