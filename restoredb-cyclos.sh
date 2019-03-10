@@ -1,9 +1,8 @@
 #!/bin/bash
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+NC="\033[0m"
 
-echo "############################"
-echo "#       ATTENTION          #"
-echo "############################"
-echo ""
 echo "This procedure is irreversible."
 echo "You should have done a manual backup before continue."
 echo ""
@@ -24,8 +23,14 @@ else
     echo "Procedure cancelled"
     exit 1
 fi
+if [ "$1" = "" ]; then
+    echo "ERROR : No file specified."
+    echo "USAGE : $ sh restoredb-cyclos.sh filename.sql"
+    echo "Procedure cancelled"
+    exit 1
+fi
 
-if [ $(find ./restoredb -type f -name "*.sql*" | wc -l) -ne 1 ]; then
+if [ $(find ./restoredb -type f -name "*.sql" | wc -l) -ne 1 ]; then
     echo "ERROR : You can only have one sql file in the restoredb directory"
     echo "Procedure cancelled"
     exit 1

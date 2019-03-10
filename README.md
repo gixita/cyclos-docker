@@ -25,6 +25,50 @@ La solution est composée de :
     - alertmanager
 - l'outil de dashboarding grafana pour visualiser les données du monitoring.
 
+## Sécuriser votre server
+La première étape est de sécuriser votre serveur, vous pouvez suivre les [instructions fournies par OVH](https://docs.ovh.com/fr/vps/conseils-securisation-vps/) pour les premières étapes.
+Mettre à jour le serveur via les commandes suivantes.
+```bash
+apt-get update
+apt-get upgrade
+```
+Ajouter un nouvel utilisateur non administrateur (non root)
+```bash
+adduser votreusername
+```
+Choisissez un mot de passe fort avec la fonction suivante.
+```bash
+openssl rand -base64 32
+```
+L'étape suivante est de sécuriser l'accès via une clé EDCSA (meilleur qu'une clé RSA). Localement sur votre PC personnel.
+```bash
+ssh-keygen -t ecdsa -b 521
+```
+Copier la clé EDCSA sur votre serveur avec la commande suivante en remplacant user par le nom d'utilisateur choisi pour le compte non administrateur de la machine et host comme adresse IP du serveur.
+```bash
+ssh-copy-id -i ~/.ssh/id_ecdsa user@host
+```
+Modifier le fichier `/etc/ssh/sshd_config` sur le serveur et établir la configuration suivante. Ceci obligera la connexion SSH a utiliser la clé EDCSA et empêchera de se connecter en temps que root directement.
+```bash
+PasswordAuthentication no
+PubkeyAuthentication yes
+RSAAuthentication yes
+PermitRootLogin no
+```
+Répéter les étapes de création d'un nouvel utilisateur "backupuser" pour fournir la clé EDCSA à un autre utilisateur de backup (à stocker dans le coffre de votre monnaie locale).
+Ajouter un nouvel utilisateur non administrateur (non root)
+```bash
+su root
+adduser backupuser
+```
+```bash
+ssh-keygen -t ecdsa -b 521
+```
+Avec comme nom de fichier backupuser. Copier le contenu de backupuser.pub dans le fichier /home/backupuser/.ssh/authorized_keys sur le serveur.
+
+Il faut maintenant stocker les clés privées EDCSA de manière sûre. La meilleur solution reste le papier. Vous pouvez utiliser un QR code pour récupérer plus facilement la clé privée. Vous pouvez utiliser l'outil se trouvant dans le dossier `QR-Code` de ce repository. Le code original de cet outil peut être trouvé sur https://github.com/davidshimjs/qrcodejs
+Imprimer la page HTML contenant la clé EDCSA et le QR-Code. Faites le pour les deux utilisateurs.
+
 ## Déploiement en local
 La solution peut être déployée localement afin de paramétriser l'outil qui sera ensuite migré (facilement) sur le serveur de production de l'ASBL.
 
@@ -212,11 +256,9 @@ monitoring.domain.com
 ```
 Qui pointent vers l'adresse IP du serveur sur lequel vous souhaitez installer l'application Cyclos en production.
 
-Vous devez dans le répertoire de départ de votre user `/home`, cloner ce repository et uploader vos fichiers de configuration que vous avez modifié précédement.
+Vous devez dans le répertoire de votre choix, cloner ce repository et uploader vos fichiers de configuration que vous avez modifié précédement.
 
-Afin d'activer le HTTPS, il y a deux fichiers de plus à modifier `cyclos.yml` et `monitoring.yml`.
-
-Il faut décommenter les lignes suivantes partout pour activer Let's Encrypt et sécuriser le site.
+Il faut décommenter les lignes suivantes dans les fichiers `cyclos.yml` et `monitoring.yml` pour activer Let's Encrypt et sécuriser le site.
 ```bash
 - LETSENCRYPT_HOST=${CYCLOS_VIRTUAL_HOST:-ebanking.domain.com}
 - LETSENCRYPT_EMAIL=${HTTPS_MAIL:-me@example.com}
@@ -246,3 +288,19 @@ sh start-all.sh
 ```
 
 Tester intensivement votre plateforme Cyclos
+
+Lorsque vous ferez des modifications de votre plateforme, n'oubliez pas de faire un backup manuel avant de faire une modification par la commande.
+```bash
+sh manual-backup-cyclos.sh
+```
+
+## Remarques concernant la paramétrisation
+J'ai quelques fois fait des modifications qui m'ont obligé à restaurer la DB dans une version antérieure. Ceci n'a pas pour vocation d'être exhaustif mais uniquement de vous conscientiser sur les dangers d'une mauvaise paramétrisation en phase de production. Voici quelques unes de mes erreurs:
+- Utiliser le même login pour le compte global que pour l'administrateur réseau
+  Conséquence : je n'avais plus accès au compte global
+- Définir le code PIN comme code de confirmation à la connection
+  Impossible de se connecter avec le compte global car il n'avait pas de code PIN activé
+
+## Méthodologie de mitigation du risque lié aux départs
+Le risque d'avoir un membre de l'équipe qui s'occupe de la monnaie électronique n'est pas négligeable. Il faut donc prendre les mesures nécessaires :
+::TODO:: Décrire les mesures 

@@ -1,4 +1,7 @@
 #!/bin/bash
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+NC="\033[0m"
 
 #
 # This file should be used to prepare and run your WebProxy after set up your .env file
@@ -67,5 +70,7 @@ docker-compose -f cyclos.yml down
 echo "Final Cyclos start only"
 docker-compose -f cyclos.yml up -d
 echo "Cyclos will take up to 3 minutes to launch."
-
+echo "You can check is Cyclos is launched with the following command, you should have :"
+echo "INFO [main] org.apache.catalina.startup.Catalina.start Server startup in XXX ms"
+echo "$ docker logs cyclos-app"
 exit 0
