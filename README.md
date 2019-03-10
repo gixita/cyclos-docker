@@ -74,6 +74,10 @@ N'oubliez pas d'ajouter les règles Firewall via l'interface de votre cloud prov
 
 ## Installation de Docker CE
 Le procédure d'installation peut être trouvée sur [le site Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+Installer `docker-compose`
+```bash
+sudo apt  install docker-compose
+```
 Afin de pouvoir utiliser Docker sans utiliser la commande `sudo`, il faut ajouter votre user au groupe `docker`.
 ```bash
 sudo gpasswd -a $USER docker
@@ -184,6 +188,7 @@ Appliquer les paramètres avec la commande suivante.
 ```bash
 sh apply-params.sh
 source .env # juste pour être sûr
+docker network create $NETWORK
 ```
 A chaque fois que vous modifiez des paramètres se trouvant dans le dossier `./params`, il est nécessaire de répèter la commande d'application des paramètres.
 
