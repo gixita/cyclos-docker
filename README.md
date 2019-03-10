@@ -285,11 +285,39 @@ Faire un backup de la base de donnée locale avec la commande (à lancer en loca
 sh manual-backup-cyclos.sh
 ```
 Un fichier compressé de backup de la base de donnée a été créé, ce fichier doit être décompressé et le fichier sql être copié dans le répertoire `./restoredb` du serveur de production.
-Veillez à ce que ce soit le seul fichier du répertoire. Sinon un message d'erreur vous empêchera de continuer.
 
-Sur le serveur de production dans le dossier de l'application, lancer
+Sur le serveur de production dans le dossier de l'application.
+Eteindre tous les containeurs sur le serveur
 ```bash
-sh restoredb-cyclos.sh database-backup-filename.sql
+sh stop-all.sh force
+```
+Effacer le dossier de la base de données.
+```bash
+sudo rm -rf db-data
+```
+Lancer un containeur temporaire pour faire un rétablissement de la base de données.
+```bash
+docker run -d \
+    --name=cyclos-restore-db \
+    --hostname=cyclos-db \
+    -v $(pwd)/db-data:/var/lib/postgresql/data \
+    -v $(pwd)/restoredb:/restoredb \
+    -e POSTGRES_DB=${CYCLOS_DB_NAME} \
+    -e POSTGRES_USER=${CYCLOS_DB_USER} \
+    -e POSTGRES_PASSWORD=${CYCLOS_DB_PASSWORD} \
+    cyclos/db
+```
+Attendre au moins une minute, puis entrer dans le containeur en ligne de commande.
+```bash
+docker exec -it cyclos-restore-db /bin/bash
+```
+Lancer le rétablissement de la base données
+```bash
+psql -U VotreUserAdminDB -d NomDeLaDB -f /restoredb/NomDuFichierDump.sql
+```
+Eteindre tous les containeurs.
+```bash
+sh stop-all.sh force
 ```
 
 Vérifier que le container s'est bien éteint par la commande 
