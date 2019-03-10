@@ -8,12 +8,13 @@ Ces scripts de déployements ont été réalisés en s'inspirant majoritairement
 - https://github.com/evertramos/docker-compose-letsencrypt-nginx-proxy-companion
 - https://github.com/prodrigestivill/docker-postgres-backup-local
 - https://github.com/vegasbrianc/prometheus
+- https://github.com/davidshimjs/qrcodejs
 
-La solution est déployée sur un serveur linux (Ubuntu server) à l'aide de container Docker afin de faciliter la maintenance et les mises à jour.
+La solution est déployée sur un serveur linux (Ubuntu server 18.04) à l'aide de Docker afin de faciliter la maintenance et les mises à jour.
 La solution est composée de :
 - un serveur proxy nginx pour la gestion des routes et les certificats Let's Encrypt.
-- nginx-gen pour générer les fichier de configuration de nginx.
-- le module nginx pour Let's Encrypt
+- nginx-gen pour générer les fichiers de configuration de Nginx.
+- le module Nginx pour Let's Encrypt
 - la base de donnée postgres de Cyclos
 - l'application java Cyclos
 - un système de backup automatique sur calendrier (réglé ici pour faire une sauvegarde toutes les heures)
@@ -64,18 +65,26 @@ adduser backupuser
 ```bash
 ssh-keygen -t ecdsa -b 521
 ```
-Avec comme nom de fichier backupuser. Copier le contenu de backupuser.pub dans le fichier /home/backupuser/.ssh/authorized_keys sur le serveur.
+Avec comme nom de fichier `backupuser`. Copier le contenu de `backupuser.pub` dans le fichier `/home/backupuser/.ssh/authorized_keys` sur le serveur. Déconnectez vous et tester la connection au serveur via le compte `backupuser`.
 
 Il faut maintenant stocker les clés privées EDCSA de manière sûre. La meilleur solution reste le papier. Vous pouvez utiliser un QR code pour récupérer plus facilement la clé privée. Vous pouvez utiliser l'outil se trouvant dans le dossier `QR-Code` de ce repository. Le code original de cet outil peut être trouvé sur https://github.com/davidshimjs/qrcodejs
 Imprimer la page HTML contenant la clé EDCSA et le QR-Code. Faites le pour les deux utilisateurs.
 
+N'oubliez pas d'ajouter les règles Firewall via l'interface de votre cloud provider.
+
+## Installation de Docker CE
+Le procédure d'installation peut être trouvée sur [le site Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+Afin de pouvoir utiliser Docker sans utiliser la commande `sudo`, il faut ajouter votre user au groupe `docker`.
+```bash
+sudo gpasswd -a $USER docker
+```
+
+
 ## Déploiement en local
 La solution peut être déployée localement afin de paramétriser l'outil qui sera ensuite migré (facilement) sur le serveur de production de l'ASBL.
 
-Modifier le fichier `/etc/hosts` afin d'ajouter les différents chemins qui seront utilisés par l'application en local.
+Modifier votre fichier `/etc/hosts` afin d'ajouter les différents chemins qui seront utilisés par l'application en local.
 En production, nous n'utiliserons que deux chemins (`ebanking` et `monitoring`).
-Vous pouvez remplacer "domain.com" par le domaine de votre ASBL (ex: mon-asbl.test) et ajouter ces valeurs au fichier `/etc/hosts`. 
-De préférence, ne pas utiliser le nom de domaine de votre ASBL, car sinon vous ne pourrez plus y avoir accès de votre PC.
 ```bash
 127.0.0.1       monitoring.localhost
 127.0.0.1       prometheus.localhost
@@ -89,8 +98,8 @@ Ensuite vider le cache du DNS local par la commande suivante :
 dscacheutil -flushcache
 ```
 
-Renommer le fichier `/params/.env.sample` en `/params/.env`
-Modifier ensuite ce fichier .env de variable d'environnement qui sera utilisé par Docker.
+Renommer le fichier `./params/.env.sample` en `./params/.env`
+Modifier ensuite ce fichier `.env` de variable d'environnement qui sera utilisé par Docker.
 La génération du mot de passe de la base de donnée devrait être fait avec la commande suivante :
 ```bash
 openssl rand -base64 32
@@ -101,16 +110,16 @@ Les adresses en local doivent être les mêmes que celles utilisées dans le fic
 # To be changed by each MLC
 CYCLOS_DB_USER=db-username
 CYCLOS_DB_PASSWORD=db-password
-CYCLOS_VIRTUAL_HOST=ebanking.domain.com
+CYCLOS_VIRTUAL_HOST=ebanking.localhost
 HTTPS_MAIL=me@e-mail.com
-GRAFANA_VIRTUAL_HOST=monitoring.domain.com
+GRAFANA_VIRTUAL_HOST=monitoring.localhost
 # End of to be changed by each MLC
 
 ## Only for localhost ##
-PROMETHEUS_VIRTUAL_HOST=prometheus.domain.com
-NODEEXPORTER_VIRTUAL_HOST=node-exporter.domain.com
-ALERTMANAGER_VIRTUAL_HOST=alertmanager.domain.com
-CADVISOR_VIRTUAL_HOST=cadvisor.domain.com
+PROMETHEUS_VIRTUAL_HOST=prometheus.localhost
+NODEEXPORTER_VIRTUAL_HOST=node-exporter.localhost
+ALERTMANAGER_VIRTUAL_HOST=alertmanager.localhost
+CADVISOR_VIRTUAL_HOST=cadvisor.localhost
 ## End of only for localhost ##
 ```
 
@@ -120,12 +129,12 @@ Dans le cas présent, les alertes sont envoyées sur un channel Slack mais peuve
 
 Renommer le fichier `./params/config.yml.sample` en `./params/config.yml` et modifier le fichier `./params/config.yml` avec vos paramètres Slack.
 Création d'un incoming webhook sur Slack : 
-- Open your slack team in your browser `https://<your-slack-team>.slack.com/apps`
-- Click build in the upper right corner
-- Choose Incoming Web Hooks link under Send Messages
-- Click on the "incoming webhook integration" link
-- Select which channel
-- Click on Add Incoming WebHooks integration
+- Ouvrir dans le browser votre team Slack `https://<your-slack-team>.slack.com/apps`
+- Cliquer sur Créer en haut à droite
+- Choisir Incoming Web Hooks link sous Send Messages
+- Cliquer sur  "incoming webhook integration"
+- Choisir le channel
+- Cliquer sur Add Incoming WebHooks integration
 
 Il faut maintenant modifier le fichier de configuration de grafana pour afficher les résultats du monitoring.
 Il faut renommer le fichier `./params/config.monitoring.sample` en `./params/config.monitoring` et modifier le fichier.
@@ -174,6 +183,7 @@ Indiquer l'URL de votre site web en production.
 Appliquer les paramètres avec la commande suivante.
 ```bash
 sh apply-params.sh
+source .env # juste pour être sûr
 ```
 A chaque fois que vous modifiez des paramètres se trouvant dans le dossier `./params`, il est nécessaire de répèter la commande d'application des paramètres.
 
@@ -300,7 +310,3 @@ J'ai quelques fois fait des modifications qui m'ont obligé à restaurer la DB d
   Conséquence : je n'avais plus accès au compte global
 - Définir le code PIN comme code de confirmation à la connection
   Impossible de se connecter avec le compte global car il n'avait pas de code PIN activé
-
-## Méthodologie de mitigation du risque lié aux départs
-Le risque d'avoir un membre de l'équipe qui s'occupe de la monnaie électronique n'est pas négligeable. Il faut donc prendre les mesures nécessaires :
-::TODO:: Décrire les mesures 
