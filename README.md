@@ -280,10 +280,12 @@ Il faut décommenter les lignes suivantes dans les fichiers `cyclos.yml` et `mon
 ```
 
 Mettre la base donnée paramétrée en local sur le serveur de production.
+La première étape est d'aller dans le menu d'administration général de Cyclos, ensuite configuration et indiquer l'adresse principale comme étant l'adresse vers laquelle le site va être migré.
 Faire un backup de la base de donnée locale avec la commande (à lancer en local).
 ```bash
 sh manual-backup-cyclos.sh
 ```
+Remettre dans la configuration locale, l'adresse principale précédement changée.
 Un fichier compressé de backup de la base de donnée a été créé, ce fichier doit être décompressé et le fichier sql être copié dans le répertoire `./restoredb` du serveur de production.
 
 Sur le serveur de production dans le dossier de l'application.
@@ -343,3 +345,18 @@ J'ai quelques fois fait des modifications qui m'ont obligé à restaurer la DB d
   Conséquence : je n'avais plus accès au compte global
 - Définir le code PIN comme code de confirmation à la connection
   Impossible de se connecter avec le compte global car il n'avait pas de code PIN activé
+
+Pour la configuration de l'envoie d'emails, si vous passez par OVH, vous pouvez utiliser la configuration suivante :
+- Hôte : ssl0.ovh.net
+- Port : 587
+- Utilisateur : l'adresse mail utilisée pour envoyer vos mails
+- Password : le mot de passe de la boîte mail
+- Protocole de sécurité : STARTTLS
+
+Vous pouvez modifier les traductions de l'interface web et mobile, je recommande de changer au moins les éléments suivants :
+- Mobile > Accueil > searchUsers : Rechercher des prestataires
+- Mobile > Utlisateurs > searchUser : Chercher un prestataire
+- Mobile > Utlisateurs > heading : Prestataires
+- Mobile > Géneral > next : Continuer
+- Mobile > Marché > next : Continuer
+- Mobile > Paiements > quickHint : Entrer le {0} du destinataire ou sélectionner une option ci-dessous
