@@ -1,7 +1,7 @@
 # cyclos-docker
 Deployment of [Cyclos](https://www.cyclos.org/) with proxy, automatic backups and monitoring using docker-compose.
 
-Déploiement d'un serveur Cyclos pour les payements électroniques des monnaies locales complémentaires.
+Déploiement d'un serveur Cyclos pour les paiements électroniques des monnaies locales complémentaires.
 Ce repository a pour but de fournir une solution de déployement la plus simple possible afin qu'elle soit accessible à toutes ASBL de gestion de MLC.
 
 Ces scripts de déployements ont été réalisés en s'inspirant majoritairement d'autres implémentations. Je remercie ces personnes du travail qu'ils ont accompli. Vous pouvez trouver ci-dessous les liens vers leurs repository GitHub.
@@ -288,12 +288,13 @@ sh manual-backup-cyclos.sh
 Remettre dans la configuration locale, l'adresse principale précédement changée.
 Un fichier compressé de backup de la base de donnée a été créé, ce fichier doit être décompressé et le fichier sql être copié dans le répertoire `./restoredb` du serveur de production.
 
+## Remplacement de la base de données
 Sur le serveur de production dans le dossier de l'application.
 Eteindre tous les containeurs sur le serveur
 ```bash
 sh stop-all.sh force
 ```
-Effacer le dossier de la base de données.
+Effacer le dossier de la base de données (seulement si vous avez effectué un backup précédement).
 ```bash
 sudo rm -rf db-data
 ```
@@ -313,7 +314,8 @@ Attendre au moins une minute, puis entrer dans le containeur en ligne de command
 ```bash
 docker exec -it cyclos-restore-db /bin/bash
 ```
-Lancer le rétablissement de la base données
+Lancer le rétablissement de la base données.
+ATTENTION cette action est irréversible.
 ```bash
 psql -U VotreUserAdminDB -d NomDeLaDB -f /restoredb/NomDuFichierDump.sql
 ```
@@ -360,3 +362,19 @@ Vous pouvez modifier les traductions de l'interface web et mobile, je recommande
 - Mobile > Géneral > next : Continuer
 - Mobile > Marché > next : Continuer
 - Mobile > Paiements > quickHint : Entrer le {0} du destinataire ou sélectionner une option ci-dessous
+
+## Protocole à adopter en cas de problème sur la plateforme
+Cette procédure ne devrait être envisagée qu'en cas de gros problème dont vous ne comprenez pas l'origine.
+Attention de bien suivre le protocole.
+Se connecter en temps qu'administrateur global de la plateforme. Modifier dans la configuration par défaut l'url principale du site en `http://localhost`. NE PAS SE DECONNECTER DE LA PLATEFORME.
+Se connecter en SSH sur le serveur et lancer un backup manuel.
+```bash
+sh manual-backup-cyclos.sh
+```
+Sur l'interface administrateur, remettre l'adresse principale qui a été modifiée à sa valeur d'origine et enregister la configuration.
+Ensuite éteindre l'application de paiement électronique.
+```bash
+sh stop-all.sh
+```
+A l'aide d'un logiciel FTP, copier l'ensemble des backups se trouvant dans le dossier `./db-backups`. Veillez également à copier l'ensemble de fichiers se trouvant dans le dossier `./params`
+Vous pouvez maintenant investiguer le problème en déployant l'application localement.
