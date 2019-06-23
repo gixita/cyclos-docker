@@ -99,6 +99,7 @@ services:
       - ./grafana/config.monitoring
     networks:
       - back-tier
+      - cyclos-net
       - webproxy
     restart: always
     environment:

@@ -273,7 +273,7 @@ Qui pointent vers l'adresse IP du serveur sur lequel vous souhaitez installer l'
 
 Vous devez dans le répertoire de votre choix, cloner ce repository et uploader vos fichiers de configuration que vous avez modifié précédement.
 
-Il faut décommenter les lignes suivantes dans les fichiers `cyclos.yml` et `monitoring.yml` pour activer Let's Encrypt et sécuriser le site.
+Il faut décommenter les lignes suivantes dans les fichiers `cyclos.yml` et `monitoring.yml` pour activer Let's Encrypt et obtenir de l'HTTPS.
 ```bash
 - LETSENCRYPT_HOST=${CYCLOS_VIRTUAL_HOST:-ebanking.domain.com}
 - LETSENCRYPT_EMAIL=${HTTPS_MAIL:-me@example.com}
@@ -336,7 +336,8 @@ sh start-all.sh
 
 Tester intensivement votre plateforme Cyclos
 
-Lorsque vous ferez des modifications de votre plateforme, n'oubliez pas de faire un backup manuel avant de faire une modification par la commande.
+## Modification dans l'interface d'administration si l'application est en production
+Lorsque vous ferez des modifications de votre plateforme, n'oubliez pas de faire un backup manuel avant de faire la moindre modification par la commande.
 ```bash
 sh manual-backup-cyclos.sh
 ```
